@@ -1,0 +1,40 @@
+Name: Ammaar Ahmad
+Roll No : 1801CS08
+
+1.  Find the name of the Suppliers who have supplied more than one Product (in terms of different PIDs)
+mysql> select SName, count(SP.PID) from SP, supplier where supplier.SID = SP.SID group by SName having count(SP.PID) >1;
+
+2.  Find the Supplier ID of the Suppliers who have supplied some specific Product more than two in quantity
+mysql> select SID from SP where Qty > 2 group by SID;
+
+3.  Find the PID(s) with highest warranty period.
+mysql> select PID from product where WarrantyPeriod = (select max(WarrantyPeriod) from product);
+
+4.  Find the name of the suppliers who have not supplied any items.
+mysql> select SName from supplier where SID not in (select SID from SP);
+
+5. Find the total number of suppliers city wise
+mysql> select City, count(City) from supplier group by City;
+
+6. Find the city (or cities) with least number of suppliers
+mysql> select City, count(City) from supplier group by City having count(City) = (select min(c) from (select count(City) as c from supplier group by City) as T);
+
+7. Check whether the suppliers ‘S001’ and ‘S002’ are from same city or not
+(i)  mysql> select City from supplier where City IN (select City from supplier where SID = 'CS01') and SID = 'CS02' ;
+(ii) mysql> select s1.SID, s2.SID, s1.City from supplier as s1 inner join supplier s2 on s1.SID<s2.SID where s1.City=s2.City and s1.SID='CS01' and s2.SID='CS02';
+(iii)mysql> select s1.SID, s2.SID, s1.City from supplier as s1 inner join supplier s2 on s1.SID<s2.SID where s1.City=s2.City;
+
+8. Find the PID of the product which has been supplied atleast 2 in quantity and by atleast 2 number of suppliers.
+mysql>select PID, count(PID), sum(Qty) from SP group by PID having count(PID)>=2 and sum(Qty)>=2;
+
+9.  Find the total quantity of each product supplied by supplier ‘CS01'
+mysql> select SP.PID, PName, WarrantyPeriod, Qty from SP inner join product on SP.PID=product.PID where SID='CS01' order by SP.PID;
+
+10. Find out the products with same name but with different warranty periods
+mysql>select p1.PID, p1.PName, p1.WarrantyPeriod from product p1 INNER JOIN product p2 ON p1.PName=p2.PName and p1.WarrantyPeriod<>p2.WarrantyPeriod order by p1.PID;
+
+11. Find out the supplier ID, city, PID and total quantity supplied by each supplier.
+mysql>select SP.SID, City, PID, Qty from SP inner join supplier ON supplier.SID = SP.SID order by SP.SID;
+
+12. Check whether the supplier with name ‘Aarya’ has supplied product with product name 'Earphone'
+select * from supplier inner join SP using (SID) inner join product using (PID) where SName='Aarya' and PName='Earphone';

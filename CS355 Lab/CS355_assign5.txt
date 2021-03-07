@@ -1,0 +1,33 @@
+Name: Ammaar Ahmad
+Roll No:- 1801CS08
+
+TASK-A
+
+alter table SP add DoS date;		//Adding column DoS to SP table
+alter table Suppliers add DoB date;	//Adding column DOB to Suppliers table
+update SP set DoS = adddate("2010-04-01", interval (floor(rand()*3650)) day); 		//Updating SP table with random DoS range (01-04-2010 to 31-03-2020)
+update suppliers set DOB = adddate("1980-01-01", interval (floor(rand()*9125)) day);	//Updating Suppliers table with random DoS range (01-01-1980 to 31-12-2004)
+load data local infile 'prod_data.txt' into table Products fields terminated by ',' lines terminated by '\n';
+load data local infile 'sup_data.txt' into table Suppliers fields terminated by ',' lines terminated by '\n';
+
+TASK-B
+
+1.select * from Suppliers where DoB = ( select max(DoB) from Suppliers );
+
+2.select SID from Suppliers where DoB > (select date_sub(now(),interval 30 year));
+
+3.select City,avg(datediff(SYSDATE(), DoB)/365) as "Average_Age" from Suppliers group by City;
+
+4.select SName from Suppliers where SID in (select SID from SP where DoS>"2019-12-31");
+
+5.select SName from Suppliers where SID in (select SID from SP where DoS>"2019-08-15");
+
+6.select PName from Products Products inner join SP on Products.PID=SP.PID where DoS=(select max(DoS) from SP);
+
+7.select SName from Suppliers where SID in (select sp1.SID from SP as sp1, SP as sp2 where sp1.PID != sp2.PID and abs( to_days(sp1.DoS) - to_days(sp2.DoS) ) <= 30 and sp1.SID = sp2.SID group by sp1.SID );
+
+8.select SP.PID, PName, WarrantyPeriod from Products inner join SP on Products.PID=SP.PID  where SP.DoS-Products.DoM>1 group by SP.PID;
+
+9.select PID,WarrantyPeriod,repeat("*",(WarrantyPeriod/10)+1) as StarRating from Products;
+
+10.create view Oldest_SID_each_city as select * from Suppliers where (DoB,City) in (select min(DoB),City from Suppliers group by City);

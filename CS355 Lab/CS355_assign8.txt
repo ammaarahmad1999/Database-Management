@@ -1,0 +1,83 @@
+Name: Ammaar Ahmad
+Roll: 1801CS08
+
+1. 
+alter table suppliers add Status varchar(20);
+delimiter $$
+create procedure procSupStatus (in TSID varchar(10))
+begin
+	declare tdob date;
+    	declare age int;
+	select DoB into tdob from Suppliers where SID=TSID;
+	set age=floor(DATEDIFF(now(), tdob)/365);
+	if(age>60) then
+    	update Suppliers set Status = "senior citizen" where SID=TSID;
+	else
+    	update Suppliers set Status = "non-senior citizen" where SID=TSID;
+	end if;
+end $$
+delimiter ;
+//Procedure to call procSupStatus for each SID
+delimiter $$
+create procedure calling_procedure_for_Q1()
+begin
+declare total_row int;
+declare counter int;
+declare id varchar(10);
+select count(*) from suppliers into total_row;
+set counter=0;
+while(counter<total_row) DO
+select SID from suppliers limit counter,1 into id;
+call procsupstatus(id);
+set counter=counter+1;
+end while;
+end $$
+delimiter ;
+
+2.
+delimiter $$
+create procedure procProdInsert (in tPID varchar(10), in tPName varchar(10), in tWarrantyPeriod smallint, in tDoM date)
+begin 
+	declare check int default 0;
+	select count(PID) into check from products where PID = tPID;
+	if(check = 0) then
+		insert into products values (tPID, tPName, tWarrantyPeriod, tDoM);
+	end if;
+end$$
+delimiter ;
+
+3. This question was little ambiguous to me. Which data is required [-1,1] interval or R-[-1,1] interval I couldn't understand
+// If interval [dt-1 year,dt+1 year] is required
+delimiter $$
+create procedure procSPDateSupply(in dt date)
+begin
+ 	select * from suppliers where SID in (select DISTINCT SID from sp where DATEDIFF(dt,DOS)<=365 and DATEDIFF(dt,DOS)>=-365);
+end$$
+delimiter ;
+call procSPDateSupply('2018-11-03');
+
+// If interval leaving [dt-1 year,dt+1 year] is required
+delimiter $$
+create procedure procSPDateSupply(in dt date)
+begin
+ 	select * from suppliers where SID in (select DISTINCT SID from sp where DATEDIFF(dt,DOS)>=365 or DATEDIFF(dt,DOS)<=-365);
+end$$
+delimiter ;
+call procSPDateSupply('2018-11-03');
+
+4.
+delimiter $$
+create function funSPGenString (in tSID varchar(10), in tPID varchar(10)) returns varchar(10) deterministic
+begin
+	declare SPID varchar(10);
+	declare sDoS varchar(10);
+	declare tDoS date;
+	select DoS into tDoS from SP where SID = tSID and PID = tPID;
+	set sDoS = convert(tDoS, varchar(10));
+	select concat(select substr(tSID, 1, 3), select substr(tPID, 1, 3), select substr(sDoS, 9, 2), select substr(sDoS, 3, 2)) into SPID;
+	return SPID;
+end$$
+delimiter ;
+	
+	 
+

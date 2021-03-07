@@ -1,0 +1,43 @@
+Name: Ammaaar Ahmad
+Roll No:- 1801CS08
+
+Task 1
+
+mysql> create database dbMidterm
+mysql> use dbmidterm
+mysql> create table customers(CusT_ID smallint primary key, Gender char(1), DoB date);
+mysql> alter table customers add constraint cc check (Gender='M' or Gender='F');
+mysql> create table Cars(Car_ID char(5) primary key, Company varchar(20) not NULL, Price int);
+mysql> create table Purchase(Cust_ID smallint, Car_ID char(5), DoP date, primary key(Cust_ID, Car_ID), constraint fk1 foreign key(Cust_ID) references customers(Cust_ID), constraint fk2 foreign key(Car_ID) references Cars(Car_ID));
+mysql> insert into customers values(1, 'M', 19990221), (2, 'M', 19980302), (3, 'F', 20000211), (4, 'M', 19900404), (5, 'F', 19800603), (6, 'M', 19851115);
+mysql> insert into Cars values('C0001', 'Hero', 210000), ('C0002', 'Tata', 215000), ('C0003', 'Hero', 220000), ('C0004', 'Maruti', 190000), ('C0005', 'Maruti', 210000), ('C0006', 'Hero', 20000), ('C0007', 'Tata', 300000), ('C0008', 'Hero', 180000);
+mysql> insert into Purchase values (1, 'C0001', 20150404), (2, 'C0004', 20180204), (1, 'C0006', 20140402), (2, 'C0005', 20110504), (5, 'C0008', 20160304), (3, 'C0007', 20190111);
+
+Task 2
+
+1. mysql> select company from Cars where price > 200000 group by Company  having count(car_id) = ( select max(x) from  (select Company , count(car_id) as x from Cars where price > 200000  group by Company) as temp );
+
+2. mysql> select customers.Cust_ID, Gender, DoB from customers inner join purchase on customers.Cust_ID = purchase.Cust_ID where DoP = (select min(DoP) from purchase);
+
+3. mysql> select Gender, count(*) from customers inner join purchase on customers.Cust_ID = purchase.Cust_ID group by Gender;
+
+4. mysql> create view temp4 as Select Cust_ID,Purchase.Car_ID,DoP, Company from Purchase inner join Cars on Purchase.Car_ID=Cars.Car_ID;
+mysql> Create view temp6 as Select Company, max(DoP) as 'recent_sold' from temp4 group by Company;
+mysql> Select temp6.Company,recent_sold,car_ID from temp6 inner join temp4 on temp6.recent_sold=temp4.DoP and temp6.Company=temp4.Company;
+
+5. mysql> select distinct company from cars where length(regexp_replace(company, '[^a]', '')) = 2;
+
+6. mysql> create table temp (company varchar(20),sold int ,rating char(5));
+mysql> insert into temp  select company ,count(purchase.car_id) ,'*' from cars left join purchase on purchase.car_id=cars.car_id group by company;
+mysql> update temp set rating ='***' where sold>=5;
+mysql> update temp set rating ='*' where sold>0 and sold<5;
+mysql> select company , rating from temp;
+mysql> drop table temp;
+
+7.mysql>select distinct Customers.Cust_ID,Gender,DoB from Purchase left join Customers on Purchase.Cust_ID = Customers.Cust_ID where extract(month from DoP) = extract(month from DoB) and extract(day from DoP) = extract(day from DoB);
+
+8. mysql> select distinct * from customers where customers.cust_id in(select distinct p1.cust_id from purchase p1 join purchase p2 on p1.cust_id=p2.cust_id and p1.car_id <> p2.car_id);
+
+9. mysql> select * from Purchase where Car_ID in (select Car_ID from Cars where Car_ID not in (select distinct a.Car_ID as Car_ID from Cars a inner join Cars b where a.Company='Honda' and b.Company='Honda' and a.Price < b.Price) and Company='Honda');
+
+10. mysql> create view unsoldCars as select Company,count(Car_ID) from Cars where Car_ID not in (select distinct Car_ID from Purchase) group by Company;

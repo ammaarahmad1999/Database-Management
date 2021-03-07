@@ -1,0 +1,50 @@
+Name: Ammaar Ahmad
+Roll: 1801CS08
+
+mysql> create database endsem;
+
+mysql> create table customer(customer_id int primary key, name varchar(30), phone varchar(15), email varchar(30), Due_Amount float, street varchar(30), city varchar(30), state varchar(30), pin varchar(30), country varchar(30));
+
+mysql> create table service(service_type varchar(20) primary key, weight float, amount float, speed int);
+
+mysql> create table package(package_ID int primary key, sender_customer_ID int, reciever_customer_ID int, service_type varchar(20), Description varchar(20), weight float, is_fragile char(1), hazardous varchar(20), tracking_ID int, constraint fk1 foreign key(service_type) references service(service_type), constraint fk9 foreign key(sender_customer_ID) references customer(customer_ID), constraint fk10 foreign key(reciever_customer_ID) references customer(customer_ID));
+
+mysql> alter table package add constraint constraint1 check (is_fragile = 'Y' or is_fragile = 'N');
+
+mysql> create table tracking(tracking_ID int primary key, Status varchar(20), devilery_date date);
+
+mysql> create table location(location_name varchar(20) primary key, latitude float, longitude float);
+
+mysql> alter table location add constraint constraint2 check (latitude >=0 and latitude <= 359 and longitude >=0 and longitude <= 359);
+
+mysql> create table transaction(trans_ID int primary key, customer_ID int, amount float, Date_of_transaction date, constraint fk2 foreign key(customer_ID) references customer(customer_ID));
+
+mysql> create table at(tracking_ID int, location_name varchar(20), vehicle_no int, place varchar(20), arrival_time timestamp, departure_time timestamp, primary key(tracking_ID, location_name, vehicle_no), constraint fk7 foreign key(tracking_ID) references tracking(tracking_ID), constraint fk8 foreign key(location_name) references location(location_name));
+
+Queries:
+
+Find the customer who has shipped the most packages in the past year.
+mysql> select sender_customer_ID, count(sender_customer_ID) from package group by sender_customer_ID having count(sender_customer_ID) = (select max(maxcount) from (select sender_customer_ID, count(sender_customer_ID) maxcount from package where date_of_shipping >= "2019-11-30" group by sender_customer_ID) as T);
+
+Find the customer who has spent the most money on shipping in the past year
+mysql> select sender_customer_ID, sum(amount) from package inner join service on service.service_type=package.service_type group by sender_customer_ID having sum(amount) = (select max(amt) from (select sender_customer_ID, sum(amount) amt from package inner join service where service.service_type=package.service_type and date_of_shipping >= "2019-11-30" group by sender_customer_ID) as T);
+
+Find the street with the most customers.
+mysql> select street, max(countstreet) from (select street, count(street) as countstreet from customer group by street) as T;
+
+Find those packages that were not delivered within the promised time
+mysql> select package_ID from package inner join service inner join tracking where service.service_type=package.service_type and tracking.tracking_ID=package.tracking_ID and delivery_date-date_of_shipping>speed;
+
+Take Customer ID and provide the details such as customer name, address, and amount owed.
+mysql> select Name, concat_ws(' ', street, city, pin, state, country) as Address, Due_Amount from customer where Customer_ID=2;
+
+A bill listing charges by type of service.
+mysql> select service.service_type, sum(amount) as amt from package inner join service where service.service_type=package.service_type group by service.service_type;
+
+
+
+
+
+
+
+

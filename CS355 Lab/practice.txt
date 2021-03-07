@@ -1,0 +1,255 @@
+Roll No: 1801CS08
+Name: Ammaar Ahmad
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sakila             |
+| sys                |
+| world              |
++--------------------+
+6 rows in set (0.25 sec)
+
+mysql> create database dblab;
+Query OK, 1 row affected (0.14 sec)
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| dblab              |
+| information_schema |
+| mysql              |
+| performance_schema |
+| sakila             |
+| sys                |
+| world              |
++--------------------+
+7 rows in set (0.00 sec)
+
+mysql> use dblab;
+Database changed
+mysql> create table supplier(SID varchar(10), SName varchar(10), City varchar(10));
+Query OK, 0 rows affected (2.25 sec)
+
+mysql> insert into supplier values(('CS01' 'Arya' 'Uttarkhand'), ('CS02', 'Abhijit', 'Maharastra'),
+    -> ('CS03', 'Abhishek', 'Punjab'), ('CS04', 'Tejasvini', 'Telangana'), ('CS05', 'Aman', 'UP'),
+    -> ('CS06', 'Navya', 'Telangana'), ('CS07', 'Amish', 'Delhi'), ('CS08', 'Ammaar', 'Kolkata'), ('CS09', 'Aryan',
+    -> 'Jaipur'), ('CS10', 'Anirban', 'Siliguri'));
+ERROR 1136 (21S01): Column count doesn't match value count at row 1
+mysql> insert into supplier values('1', 'Arya', 'Uttarkhand');
+Query OK, 1 row affected (0.14 sec)
+
+mysql> insert into supplier values('2', 'Abhijit', 'Maharastra');
+Query OK, 1 row affected (0.17 sec)
+
+mysql> insert into supplier values (('CS03', 'Abhishek', 'Punjab'), ('CS04', 'Tejasvini', 'Telangana'), ('CS05', 'Aman', 'UP'));
+ERROR 1241 (21000): Operand should contain 1 column(s)
+mysql> insert into supplier values('3', 'Abhishek', 'Chandigarh');
+Query OK, 1 row affected (0.12 sec)
+
+mysql> insert into supplier values('4', 'Tejasvini', 'Hydrebad'), ('5', 'Aman', 'UP');
+Query OK, 2 rows affected (0.21 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> insert into supplier values('CS06', 'Navya', 'Telangana'), ('CS07', 'Amish', 'Delhi'), ('CS08', 'Ammaar', 'Kolkata'), ('CS09', 'Aryan',
+    ->
+    -> 'Jaipur');
+Query OK, 4 rows affected (0.12 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> insert into supplier values('CS10', 'Anirban', 'Siliguri');
+Query OK, 1 row affected (0.11 sec)
+
+mysql> select * from suppliers;
+ERROR 1146 (42S02): Table 'dblab.suppliers' doesn't exist
+mysql> select * from supplier;
++------+-----------+------------+
+| SID  | SName     | City       |
++------+-----------+------------+
+| 1    | Arya      | Uttarkhand |
+| 2    | Abhijit   | Maharastra |
+| 3    | Abhishek  | Chandigarh |
+| 4    | Tejasvini | Hydrebad   |
+| 5    | Aman      | UP         |
+| CS06 | Navya     | Telangana  |
+| CS07 | Amish     | Delhi      |
+| CS08 | Ammaar    | Kolkata    |
+| CS09 | Aryan     | Jaipur     |
+| CS10 | Anirban   | Siliguri   |
++------+-----------+------------+
+10 rows in set (0.05 sec)
+
+mysql> create table product(PID varchar(10), PName varchar(10), Warranty Period int);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Period int)' at line 1
+mysql>  create table product(PID varchar(10), PName varchar(10), WarrantyPeriod int);
+Query OK, 0 rows affected (2.24 sec)
+
+mysql> insert into product values
+    -> ('1', 'Telephone', 2);
+Query OK, 1 row affected (0.13 sec)
+
+mysql> insert into product values
+    -> ('2', 'Mobile', 3)
+    -> ('3', 'Washing', 1)
+    -> ('4', 'Smartphone', 1)
+    -> ('5', 'Television', 1)
+    -> ('6', 'HP Laptop', 3)
+    -> ('7', 'Desktop', 2)
+    -> ('8', 'Keyboard', 0)
+    -> ('9', 'Earphone', 0)
+    -> ('10', 'Speaker', 2);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '('3', 'Washing', 1)
+('4', 'Smartphone', 1)
+('5', 'Television', 1)
+('6', 'HP Lapt' at line 3
+mysql> insert into product values
+    -> ('2', 'Mobile', 3),
+    ->  ('3', 'Washing', 1)
+    ->     -> ('4', 'Smartphone', 1)
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '-> ('4', 'Smartphone', 1)' at line 4
+mysql> insert into product values
+    -> ('2', 'Mobile', 3),
+    -> ('3', 'Washing', 1),
+    -> ('4', 'Smartphone', 1),
+    -> ('8', 'Keyboard', 0),
+    -> ('9', 'Earphone', 0),
+    -> ('5', 'Television', 1),
+    -> ('7', 'Desktop', 2);
+Query OK, 7 rows affected (0.13 sec)
+Records: 7  Duplicates: 0  Warnings: 0
+
+mysql> insert into product values
+    -> ('6', 'HP Laptop', 3),
+    -> ('10', 'Speaker', 2);
+Query OK, 2 rows affected (0.13 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> select * from product;
++------+------------+----------------+
+| PID  | PName      | WarrantyPeriod |
++------+------------+----------------+
+| 1    | Telephone  |              2 |
+| 2    | Mobile     |              3 |
+| 3    | Washing    |              1 |
+| 4    | Smartphone |              1 |
+| 8    | Keyboard   |              0 |
+| 9    | Earphone   |              0 |
+| 5    | Television |              1 |
+| 7    | Desktop    |              2 |
+| 6    | HP Laptop  |              3 |
+| 10   | Speaker    |              2 |
++------+------------+----------------+
+10 rows in set (0.00 sec)
+
+mysql> create table SP(SID varchar(10), PID varchar(10));
+Query OK, 0 rows affected (1.64 sec)
+
+mysql> insert into SP values
+    -> ('1', '4'), ('1', '8'), ('1', '9'), ('4', '6'), ('2', '5'), ('2', '10'), ('CS06', '5'), ('CS09', '1');
+Query OK, 8 rows affected (0.27 sec)
+Records: 8  Duplicates: 0  Warnings: 0
+
+mysql> insert into SP values
+    -> ('CS05', '6'), ('CS08', '4'), ('CS09', '7'), ('4', '7'), ('CS07', '1');
+Query OK, 5 rows affected (0.22 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> select * from SP;
++------+------+
+| SID  | PID  |
++------+------+
+| 1    | 4    |
+| 1    | 8    |
+| 1    | 9    |
+| 4    | 6    |
+| 2    | 5    |
+| 2    | 10   |
+| CS06 | 5    |
+| CS09 | 1    |
+| CS05 | 6    |
+| CS08 | 4    |
+| CS09 | 7    |
+| 4    | 7    |
+| CS07 | 1    |
++------+------+
+13 rows in set (0.00 sec)
+
+mysql> DESC product
+    -> ;
++----------------+-------------+------+-----+---------+-------+
+| Field          | Type        | Null | Key | Default | Extra |
++----------------+-------------+------+-----+---------+-------+
+| PID            | varchar(10) | YES  |     | NULL    |       |
+| PName          | varchar(10) | YES  |     | NULL    |       |
+| WarrantyPeriod | int         | YES  |     | NULL    |       |
++----------------+-------------+------+-----+---------+-------+
+3 rows in set (0.31 sec)
+
+mysql> DESC supplier
+    -> ;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| SID   | varchar(10) | YES  |     | NULL    |       |
+| SName | varchar(10) | YES  |     | NULL    |       |
+| City  | varchar(10) | YES  |     | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+C:\Users\HP>cd C:\Program Files\MySQL\MySQL Server 8.0\bin
+
+C:\Program Files\MySQL\MySQL Server 8.0\bin>sudo mysql -u scot -p
+'sudo' is not recognized as an internal or external command,
+operable program or batch file.
+
+C:\Program Files\MySQL\MySQL Server 8.0\bin>mysql -u scot -p
+Enter password: *****
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 16
+Server version: 8.0.21 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2020, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| dblab              |
+| information_schema |
++--------------------+
+2 rows in set (0.04 sec)
+
+mysql> use dblab;
+Database changed
+mysql> select * from product
+    -> ;
++------+------------+----------------+
+| PID  | PName      | WarrantyPeriod |
++------+------------+----------------+
+| 1    | Telephone  |              2 |
+| 2    | Mobile     |              3 |
+| 3    | Washing    |              1 |
+| 4    | Smartphone |              1 |
+| 8    | Keyboard   |              0 |
+| 9    | Earphone   |              0 |
+| 5    | Television |              1 |
+| 7    | Desktop    |              2 |
+| 6    | HP Laptop  |              3 |
+| 10   | Speaker    |              2 |
++------+------------+----------------+
+10 rows in set (0.05 sec)
+
+mysql>
+

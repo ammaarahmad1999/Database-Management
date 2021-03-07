@@ -1,0 +1,64 @@
+Name: Ammaar Ahmad
+Roll No: 1801CS08
+
+Task 1:
+mysql> create table account(anum decimal(5) as primary key, bname varchar(20), balance int);
+mysql> create table CustAcc(anum decimal(5), cname varchar(20), primary key(anum,cname));
+
+TasK 2:
+
+1. 
+delimiter $$
+create procedure procAccDummyData(in n int)
+begin
+	declare count int default 1;
+	declare r decimal(5);
+	declare b int;
+	while count <= n do
+		set r = rand()*99999;
+		set b = rand()*1000000;
+		insert into account values(r, concat("branch", convert(r, char)), b);
+		set count = count + 1;
+	end while;
+end$$
+delimiter ;
+
+2.
+delimiter $$
+create function funWithdraw(accnum decimal(5), amount int) returns int deterministic
+begin
+	declare amt int;
+	select balance into amt from account where accnum=anum;
+	set amt = amt - amount;
+	if (amt>=0) then
+		update account set balance = amt where accnum=anum;
+	else
+		set amt = -1;
+	end if;
+	return (amt);
+end$$
+delimiter ; 
+
+3. 
+a) delimiter $$
+create trigger before_custAcc_insert before insert on custAcc for each row
+begin
+	declare ch int default 0;
+	declare error varchar(255);
+	set error = "Account Number doesn't exist";
+	select count(*) into ch from account where new.anum=account.anum;
+	if(ch = 0) then
+		signal sqlstate '45000'	set message_text = errormessage;
+	end if;
+end$$
+delimiter ;
+
+b)  create table accBalanceUpdate(anum decimal(5), balance decimal(6), dou date, tou timestamp);
+delimiter $$
+create trigger before_account_update before update on account for each row
+begin
+	if(new.balance >=0) then
+		insert into accBalanceUpdate values (new.anum, old.balance, curdate(), current_timestamp());
+	end if;
+end$$
+delimiter ;

@@ -1,0 +1,48 @@
+Name: Ammaar Ahmad
+Roll No:- 1801CS08
+
+Task A:
+Note: All queires in this task is relative to my previous format of SID and PID to get the new prescribed format of SID and PID. It may not work for all cases. According to the question we had to just get the desired format.
+
+mysql> alter table SP drop foreign key SP_fk2; 
+mysql> alter table SP add constraint SP_fk2 foreign key(PID) references product(PID) on delete cascade on update cascade;
+mysql> update product set PID = concat('00',PID);
+mysql> update product set PID = concat('prd-',PID);
+mysql> update supplier set SID = insert(SID, 1, 2, "sup00");
+mysql> alter table supplier add EmailID varchar(20);
+mysql> alter table supplier modify EmailID varchar(25) constraint email_format check (REGEXP_LIKE (Email_ID,'^\w+(\.\w+)*+@\w+(\.\w+)+$'));
+mysql> alter table product add weight int;
+mysql> update product set weight = 10+rand()*10000;
+
+Task B:
+
+1. For each PID of Products table, extract only the number part from PIDs
+mysql>select substr(PID, 5, 4) as Num_PID, PName, WarrantyPeriod from product;
+
+2. For each entry of SP table, display SID, PID and OrderID. Here, OrderID needs to be derived from SID and PID. Let’s say SID is ‘sup1221’ and PID is ‘prd-373’ then OrderID will be ‘*sup1221@prd-373#’
+mysql> select SID, PID, (concat('*',SID,'@',PID,'#')) as OrderID from SP;
+
+3. For each entry of Suppliers table, display the SID by replacing the ‘sup’ string of SIDs with ‘sppl’ string.
+mysql> select replace (SID, "sup", "sppl") as new_SID from supplier;
+
+4. Find the unique domain name from the email attribute. Domain name refers to the string after ‘@’ of email value.
+mysql> select substr(EmailID, locate("@", EmailID, 1), 25) as host from supplier group by substr(EmailID, locate("@", EmailID, 1), 25););
+
+5. For each PID of Product table, display the PID, weight and the weight_in_kg
+mysql> mysql> select PID, weight, weight/1000 as weight_in_kg from product;
+
+6. For each PID, check whether the numeric field of each PID is a palindrome or not
+mysql> select PID, substr(PID, 5, 4)=reverse(substr(PID,5,4)) as Palincheck from product;
+
+7. Find the details of Suppliers who have supplied atleast one product with WarrantyPeriod greater than 2.
+mysql> select SP.SID, SName, City, Email_ID from supplier, SP, product where WarrantyPeriod >= 2 and SP.SID=supplier.SID and SP.PID=product.PID group by SP.SID;
+
+8. Find the SID who have supplied all items.
+mysql> select SID from SP group by SID having count(SID)=(select count(*) from product);
+
+9. Create a view to list the products which have not been supplied by any suppliers so far.
+mysql> create view custom as select * from product where not exists (select SP.PID from SP where SP.PID = product.PID);
+
+10. Create a view to show the list of SIDs who have never supplied more than 5 quantity items in a single purchase.
+mysql> create view custom_view as select SID from supplier where not exists(select SP.SID from SP where supplier.SID = SP.SID and Qty>5);
+mysql> select * from custom_view;

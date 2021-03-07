@@ -1,0 +1,48 @@
+Name : Ammaar Ahmad
+Roll : 1801CS08
+
+1. (a)Cardinality means no. of participation between entities whereas Participation constraints define the least number of relationship instances in which an entity must compulsorily participate.
+(b)Cardinality indicates at most relations whereas participation constraint talks about at least or minimum relation.
+(c)e.g:- cardinality: Each 'employee' can get unique salary, so employee and salary entity have one-one relation but each department can have multiple employee which is many-one relation.
+e.g:- Participation constraint: In company every department must have a manager but at same time not every employee is manager.
+(d)If (say) an employee manages one or more department than it is a cardinality whereas 'Managing a department' is participation constraint in relation between employee and department.
+Cardinality constraint is more powerful.
+
+2. Primary Key: It is atmost one which uniquely defines the tuple of the entity set. It cannpt take NULL value.
+Unique Key: It can be more than one. It is unique for each atribute but it is not used as a definition of tuple of set.
+It can take NULL value.
+
+3. Primary Key: It is atmost one which uniquely defines the tuple of the entity set.
+Foreign Key : It can be more than one. It is a key used to link two different entity sets. A foreign key must be primary key or alteast unique key of the original entity set 
+
+4. Integrity Rules of DBMS
+(a) All primary key are unique, primary key cannot take NULL values
+(b) A foreign key must be a unique key of the original entity set. It can be NULL if it's not a primary key
+
+5. tuple
+
+6. column
+
+7. domain
+
+8. schema, instance
+
+9. attributes, relation
+
+10. any
+
+11. Referential integrity refers to the accuracy and consistency of data within a relationship.In relationships, data is linked between two or more tables. This is achieved by having the foreign key (in the associated table) reference a unique key value (in primary table). Because of this, we need to ensure that data on both sides of the relationship remain intact.So, referential integrity requires that, whenever a foreign key value is used it must reference a valid, existing unique key in the parent table.
+
+12. False
+
+13. False
+
+14. Composite Attributes: It is a collection of smaller attributes(entity) which define a particular attribute of a tuple of entity set.
+Composite Single value attribute: Qualification of students(Previous education) which can have DegreeName, Year etc. All of which are single valued attribute
+Composite Multi value attribute: Name which has 3 simple attributes, First Name, Middle Name and Last Name, where Middle Name is multi valued attribute
+
+15. Weak entity set is an entity set which does not have primary key of it's own. The existence of weak entity set depends upon existence of linked strong entity set.
+(a) It must relate to strong entity set through total, one-many relationship from strong to weak entity set
+(b) The discriminator or partial key of a weak entity set helps in distinguishing among the tuples linked to same entity of strong entity set.
+(c) The primary key of weak entity is formed by the primary key of strong entity set on which the weak entity set is existence dependent and the weak entity set's discriminator
+

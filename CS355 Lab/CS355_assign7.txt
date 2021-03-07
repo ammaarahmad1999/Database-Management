@@ -1,0 +1,117 @@
+Name: Ammaar Ahmad
+Roll: 1801CS08
+
+Task 1: For csv file transactions.csv
+Task A
+mysql> create table transactions(Series_reference varchar(255), Period varchar(255), Data_value decimal(20,5), Suppressed varchar(255), STATUS varchar(255), UNITS varchar(255), Magnitude int, Subject varchar(255), Group_name varchar(255), Series_title_1 varchar(255), Series_title_2 varchar(255), Series_title_3 varchar(255), Series_title_4 varchar(255), Series_title_5 varchar(255));
+
+mysql> load data local infile "C:/Users/HP/Downloads/transactions.csv" into table transactions fields terminated by ',' optionally enclosed by '"' lines terminated by '\n' ignore 1 rows;
+
+Task B
+mysql> select * from transactions where UNITS = "Percent" and status = 'C';
+Average Time: 0.22 seconds
+
+mysql> select Series_reference, Period, Data_value from transactions where Data_value>=10000 and Data_value<=99999;
+Average Time: 0.10 seconds
+
+mysql> select Series_reference, Period, Data_value from transactions where UNITS = "Percent" and status = 'C' and Data_value >=10000 and Data_value<=99999;
+Average Time: 0.07 seconds
+
+mysql> update transactions set Data_value=10000.00 where Units="Percent" and status='C';
+Average Time: 0.31 seconds
+
+mysql> update transactions set status='F' where Data_value >=10000 and Data_value<100000;
+Average Time: 0.43 seconds
+
+mysql> insert into transactions values ('ECTA.S19A1','2007.03',36422,NULL,'F','Dollars',7,'Electronic Card Transactions (ANZSIC06) - ECT','Total values - Electronic card transactions A/S/T by division','Actual','RTS total industries','','','');
+Average Time: 0.14 seconds
+
+mysql> insert into transactions values ('ECTA.S19A2','2006.03',36422,NULL,'F','Dollars',7,'Electronic Card Transactions (ANZSIC06) - ECT','Total values - Electronic card transactions A/S/T by division','Actual','RTS total industries','Final','','');
+Average Time: 0.10 seconds
+
+Task C
+//Creating new table and indexing idx1 in new table
+mysql> create table new_transactions like transactions;
+mysql> insert new_transactions select * from transactions;
+mysql> alter table new_transactions add index idx1(Status);
+
+Task D:
+mysql> select * from new_transactions where UNITS = "Percent" and status = 'C';
+Average Time: 0.07 seconds
+
+mysql> select Series_reference, Period, Data_value from new_transactions where Data_value>=10000 and Data_value<=99999;
+Average Time: 0.12 seconds 
+
+mysql> select Series_reference, Period, Data_value from new_transactions where UNITS = "Percent" and status = 'C' and Data_value >=10000 and Data_value<=99999;
+Average Time: 0.03 seconds
+
+mysql> update new_transactions set Data_value=10000.00 where Units="Percent" and status='C';
+Average Time: 0.10 seconds
+
+mysql> update new_transactions set status='F' where Data_value >=10000 and Data_value<100000;
+Average Time: 0.33 seconds
+
+mysql> insert into new_transactions values ('ECTA.S19A2','2006.03',36422,NULL,'F','Dollars',7,'Electronic Card Transactions (ANZSIC06) - ECT','Total values - Electronic card transactions A/S/T by division','Actual','RTS total industries','Final','','');
+Average Time: 0.16 seconds
+
+mysql> insert into new_transactions values ('ECTA.S19A2','2006.03',36422,NULL,'F','Dollars',7,'Electronic Card Transactions (ANZSIC06) - ECT','Total values - Electronic card transactions A/S/T by division','Actual','RTS total industries','Final','','');
+Average Time: 0.11 seconds
+
+Task E: Inferences
+Select - Time decreases on indexing generally
+Update - Time decreases on indexing generally
+Insert - Time increases on indexing generally 
+
+
+Task 2: For csv file 
+https://www.stats.govt.nz/assets/Uploads/Business-operations-survey/Business-operations-survey-2019/Download-data/business-operations-survey-2019-international-engagement-csv.csv
+Renamed as business.csv
+
+Task A:
+mysql> create table business(description varchar(2000), industry varchar(200) ,level varchar(10), size varchar(20), line_code varchar(200) ,value int);
+
+mysql> load data local infile "C:/Users/HP/Downloads/business.csv" into table business fields terminated by ',' optionally enclosed by '"' lines terminated by '\n' ignore 1 rows;
+
+Task B:
+mysql> select * from business where industry='total';
+Average Time: 0.39 seconds
+
+mysql> select * from business where value>100 and value<200;
+Average time: 0.06 seconds
+
+mysql> insert into business values("Markets where business sold raw, unprocessed materials - NZ only",'total','0','6-19 employees','C0201.01',2715);
+Average Time: 0.13 seconds
+
+mysql> update business set level = '1' where value = 2715;
+Average Time: 0.53 seconds
+
+mysql> update business set level = '1' where value > 2000 and value < 3000;
+Average Time: 0.84 seconds
+
+Task C:
+//Creating new table and indexing idx2 in new table
+mysql> create table new_business like business;
+mysql> insert into new_business select * from business;
+mysql> alter table new_business add index idx2(value);
+
+Task D:
+mysql> select * from new_business where industry='total';
+Average Time: 0.27 seconds
+
+mysql> select * from new_business where value>100 and value<200;
+Average Time: 0.04 seconds
+
+mysql> insert into new_business values("Markets where business sold raw, unprocessed materials - NZ only",'total','0','6-19 employees','C0201.01',2715);
+Average Time: 0.16 seconds
+
+mysql> update new_business set level = '1' where value = 2715;
+Average Time: 0.21 seconds
+
+mysql> update new_business set level = '1' where value > 2000 and value < 3000;
+Average Time: 0.69 seconds
+
+Task E: Inferences
+Select - Time decreases on indexing generally
+Update - Time decreases on indexing generally
+Insert - Time increases on indexing generally
+

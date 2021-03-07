@@ -1,0 +1,108 @@
+Name: Ammaar Ahmad
+Roll No.- 1801CS08
+
+Task A
+
+//Creating a table banks
+mysql> create table banks (bank_name varchar(20), bank_city varchar(20), no_of_accounts int, security varchar(20));
+mysql> alter table banks add primary key(bank_name, bank_city);
+
+//Loading data from file bank.txt to table banks
+mysql> LOAD DATA LOCAL INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Data/chicago/banks.txt' into table banks fields terminated by '\t' lines terminated by '\n';
+
+//Creating a table robbers
+mysql> create table robbers(ID int auto_increment primary key, Nickname varchar(20), Age smallint , Years_in_Prison smallint);
+
+//Loading data from file robbers.txt to table robbers
+mysql> LOAD DATA LOCAL INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Data/chicago/robbers.txt' into table robbers fields terminated by '\t' (Nickname, Age, Years_in_Prison);
+
+//Creating a table robber_skills
+mysql> create table robber_skills (Nickname varchar(20), Skill varchar(20), Preference smallint, Grade varchar(2));
+
+//Loading data from file hasskills.txt to table robber_skills
+mysql> LOAD DATA LOCAL INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Data/chicago/hasskills.txt' into table robber_skills fields terminated by '\t';
+
+//Creating a table skill_set
+mysql> create table skill_set (Skill varchar(20), primary key(Skill));
+
+//Inserting different skills to skill_set from already present Skill of robbers
+mysql> insert into skill_set select Skill from robber_skills group by Skill;
+
+//Updating Skill of robber_skills table as foreign key to avoid spelling mistakes and limiting there skills to finite numbers of skills present in skill_set
+ alter table robber_skills add constraint fk2 foreign key(Skill) references skill_set(Skill);
+
+//Creating a table robber_accounts
+create table robber_accounts (Nickname varchar(20), bank_name varchar(20), bank_city varchar(20));
+alter table robber_accounts add constraint fk1 foreign key(bank_name, bank_city) references banks(bank_name, bank_city);
+
+//Loading data from file hasaccounts.txt to table robber_accounts
+mysql> LOAD DATA LOCAL INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Data/chicago/hasaccounts.txt' into table robber_accounts fields terminated by '\t' lines terminated by '\n';
+
+//Creating a table robberies
+mysql> create table robberies (bank_name varchar(20), bank_city varchar(20), robbing_date date, amount float, foreign key(bank_name,bank_city) references banks(bank_name,bank_city));
+
+//Loading data from file robberies.txt to table robberies
+mysql> LOAD DATA LOCAL INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Data/chicago/robberies.txt' into table robberies fields terminated by '\t' lines terminated by '\n';
+
+//Creating a table plans
+mysql> create table plans (bank_name varchar(20), bank_city varchar(20), robbing_date date, amount float, constraint plans_fk1 foreign key(bank_name,bank_city) references banks(bank_name,bank_city));
+
+//Loading data from file plans.txt to table plans
+mysql> LOAD DATA LOCAL INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Data/chicago/plans.txt' into table plans fields terminated by '\t' lines terminated by '\n';
+
+//Creating a table accomplices
+mysql> create table accomplices (Nickname varchar(20), bank_name varchar(20), bank_city varchar(20), robbing_date date, amount float, constraint accomplices_fk1 foreign key(bank_name,bank_city) references banks(bank_name,bank_city));
+
+//Loading data from file accomplices.txt to table accomplices
+mysql> LOAD DATA LOCAL INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Data/chicago/accomplices.txt' into table accomplices fields terminated by '\t' lines terminated by '\n';
+
+//Adding ID column to table accomplices and then updating it to ID of robber and then updating (ID) as foreign key reference to robbers
+mysql> alter table accomplices add ID int first;
+mysql> update accomplices, robbers set accomplices.ID = robbers.ID where robbers.Nickname = accomplices.Nickname;
+mysql> alter table accomplices add constraint fk3 foreign key(ID) references robbers(ID);
+mysql> alter table accomplices drop Nickname;		//Dropping the column Nickname as it is redundant because ID is unique and can lead to inconsistent data
+
+
+//Adding ID column to table robber_accounts and then updating it to ID of robber and then updating (ID) as foreign key reference to robbers
+mysql> alter table robber_accounts add ID int first;
+mysql> update robber_accounts, robbers set robber_accounts.ID = robbers.ID where robbers.Nickname = robber_accounts.Nickname;
+mysql> alter table robber_accounts add constraint fk4 foreign key(ID) references robbers(ID);
+mysql> alter table robber_accounts drop Nickname; 	//Dropping the column Nickname as it is redundant because ID is unique and can lead to inconsistent data
+
+
+//Adding ID column to table robber_skills and then updating it to ID of robber and then updating (ID) as foreign key reference to robbers
+mysql> alter table robber_skills add ID int first;
+mysql> update robber_skills, robbers set robber_skills.ID = robbers.ID where robbers.Nickname = robber_skills.Nickname;
+mysql> alter table robber_skills add constraint fk5 foreign key(ID) references robbers(ID);
+mysql> alter table robber_skills drop Nickname;		//Dropping the column Nickname as it is redundant because ID is unique and can lead to inconsistent data
+
+
+Task B:
+
+1. mysql> create view v1 as select * from robbers where Age<40 and Years_in_prison>4;
+
+2. mysql> create view v2 as select ID, Nickname from robbers where not exists (select ID from accomplices where robbing_date > "2004-12-31" and robbing_date < "2011-01-01");	
+
+3. mysql> create view v3 as select robbers.ID, robbers.Nickname,Skill from robbers, robber_skills where robbers.ID=robber_skills.ID and (Age,Skill) in (select max(Age), Skill from robbers, robber_skills where robbers.ID=robber_skills.ID group by Skill);
+
+4. 
+//If (bank_name, bank_city) pair is to be considered as unique 
+mysql> create view v4 as select bank_name, bank_city, count(*) as count from robberies group by bank_name, bank_city having count>1 order by count;
+//If only bank_name is to be considered as unique
+mysql> create view v4 as select bank_name, count(*) as count from robberies group by bank_name having count>1 order by count;
+
+5. mysql> create view v5 as select * from robberies where bank_city="chicago" order by robbing_date DESC limit 5;
+
+6. mysql> create view v6 as select accomplices.ID, robbers.Nickname, sum(amount) from accomplices, robbers where accomplices.ID=robbers.ID group by accomplices.ID;
+
+7. mysql> create view v7 as select robber_skills.ID, robbers.Nickname, count(*) from robber_skills, robbers where robbers.ID= robber_skills.ID group by robber_skills.ID order by count(*);
+
+8. 
+//If only bank_name is considered as unique
+mysql> create view v8 as select bank_name from plans where robbing_date > "2020-09-24" and robbing_date < "2020-12-25" group by bank_name;
+//If (bank_name, bank_city) pair is considered as unique
+mysql> create view v8 as select bank_name, bank_city from plans where robbing_date > "2020-09-24" and robbing_date < "2020-12-25" group by bank_name, bank_city;
+
+9. mysql> create view v9 as select robbers.ID, robbers.Nickname from robbers, robber_accounts where robbers.ID = robber_accounts.ID and (bank_name, bank_city) in (select bank_name, bank_city from plans where robbing_date > "2020-09-24" and robbing_date < "2020-12-25" group by bank_name, bank_city);
+
+10.mysql> create view v10 as select banks.bank_name, banks.bank_city, sum(if(amount is NULL,0,1)) as Num_of_robberies, security from banks left join robberies on banks.bank_name = robberies.bank_name and banks.bank_city = robberies.bank_city group by banks.bank_name, banks.bank_city;
